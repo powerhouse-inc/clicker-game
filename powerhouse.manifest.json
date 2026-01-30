@@ -1,0 +1,33 @@
+{
+    "name": "Test",
+    "description": "",
+    "category": "",
+    "publisher": {
+        "name": "",
+        "url": ""
+    },
+    "documentModels": [
+        {
+            "id": "powerhouse/doc1",
+            "name": "Doc1"
+        }
+    ],
+    "editors": [
+        {
+            "id": "doc1-editor",
+            "name": "Doc1Editor",
+            "documentTypes": [
+                "powerhouse/doc1"
+            ]
+        }
+    ],
+    "apps": [],
+    "subgraphs": [
+        {
+            "id": "test1",
+            "name": "Test1",
+            "documentTypes": []
+        }
+    ],
+    "importScripts": []
+}
