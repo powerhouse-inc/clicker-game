@@ -7,7 +7,9 @@
       "Bash(ls:*)",
       "Bash(grep:*)",
       "mcp__reactor-mcp__getDocumentModelSchema",
-      "mcp__reactor-mcp__getDrives"
+      "mcp__reactor-mcp__getDrives",
+      "mcp__reactor-mcp__addActions",
+      "Bash(npm run lint:fix:*)"
     ],
     "deny": [
       "Write(./document-models/*/gen/**)",

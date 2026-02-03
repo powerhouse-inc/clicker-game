@@ -444,3 +444,40 @@ When working with drives (adding/removing documents, creating folders, etc.):
    - `MOVE_NODE` - Move a node to different location
 
 3. **Check input schemas** for each operation to ensure you're passing correct parameters
+
+## Existing Document Models
+
+### Clicker Game (`powerhouse/clicker-game`)
+
+A multiplayer clicker game where players compete on a shared leaderboard.
+
+**Location**: `document-models/clicker-game/`
+
+**State Schema**:
+```graphql
+type ClickerGameState {
+  players: [Player!]!
+}
+
+type Player {
+  id: OID!
+  name: String!
+  clicks: Int!
+}
+```
+
+**Operations** (module: `game`):
+| Operation | Input | Description |
+|-----------|-------|-------------|
+| `ADD_PLAYER` | `id: OID!, name: String!` | Add a new player with 0 clicks |
+| `CLICK` | `playerId: OID!` | Increment a player's click count |
+| `REMOVE_PLAYER` | `playerId: OID!` | Remove a player from the game |
+| `RESET_GAME` | `_placeholder: String` | Reset all player clicks to 0 |
+
+**Errors**:
+- `DuplicatePlayerError` - Player ID already exists (ADD_PLAYER)
+- `PlayerNotFoundError` - Player not found (CLICK, REMOVE_PLAYER)
+
+**Editor**: `editors/clicker-game-editor/`
+- Components: `PlayerForm`, `ClickButton`, `GameStats`, `Leaderboard`
+- Uses `useSelectedClickerGameDocument` hook for document access

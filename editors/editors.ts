@@ -1,6 +1,4 @@
 import type { EditorModule } from "document-model";
-import { Doc1Editor } from "./doc1-editor/module.js";
+import { ClickerGameEditor } from "./clicker-game-editor/module.js";
 
-export const editors: EditorModule[] = [
-  Doc1Editor,
-];
+export const editors: EditorModule[] = [ClickerGameEditor];

@@ -1,0 +1,149 @@
+{
+  "author": {
+    "name": "Powerhouse",
+    "website": ""
+  },
+  "description": "A multiplayer clicker game with shared leaderboard",
+  "extension": "clicker",
+  "id": "powerhouse/clicker-game",
+  "name": "ClickerGame",
+  "specifications": [
+    {
+      "changeLog": [],
+      "modules": [
+        {
+          "description": "Game operations for the clicker game",
+          "id": "game-module",
+          "name": "game",
+          "operations": [
+            {
+              "description": "Add a new player with 0 clicks",
+              "errors": [
+                {
+                  "code": "DUPLICATE_PLAYER",
+                  "description": "Player ID already exists",
+                  "id": "duplicate-player-error",
+                  "name": "DuplicatePlayerError",
+                  "template": ""
+                },
+                {
+                  "code": "NOT_AUTHORIZED",
+                  "description": "User is not authenticated",
+                  "id": "not-authorized-add-player",
+                  "name": "NotAuthorizedError",
+                  "template": ""
+                },
+                {
+                  "code": "GAME_NOT_STARTED",
+                  "description": "Game has not been started yet",
+                  "id": "game-not-started-error",
+                  "name": "GameNotStartedError",
+                  "template": ""
+                }
+              ],
+              "examples": [],
+              "id": "add-player-op",
+              "name": "ADD_PLAYER",
+              "reducer": "const address = action.context?.signer?.user?.address;\nif (!address) {\n  throw new NotAuthorizedError('User is not authenticated');\n}\nif (!state.gameMaster) {\n  throw new GameNotStartedError('Game has not been started yet');\n}\nconst existing = state.players.find(p => p.id === address);\nif (existing) {\n  throw new DuplicatePlayerError(`Player with address ${address} already exists`);\n}\nstate.players.push({\n  id: address,\n  name: action.input.name,\n  clicks: 0,\n});",
+              "schema": "input AddPlayerInput {\n  name: String!\n}",
+              "scope": "global",
+              "template": "Add a new player with 0 clicks"
+            },
+            {
+              "description": "Increment a player's click count",
+              "errors": [
+                {
+                  "code": "PLAYER_NOT_FOUND",
+                  "description": "Player does not exist",
+                  "id": "player-not-found-click-error",
+                  "name": "PlayerNotFoundError",
+                  "template": ""
+                }
+              ],
+              "examples": [],
+              "id": "click-op",
+              "name": "CLICK",
+              "reducer": "const address = action.context?.signer?.user?.address;\nif (!address) {\n  throw new NotAuthorizedError('User is not authenticated');\n}\nconst player = state.players.find(p => p.id === address);\nif (!player) {\n  throw new PlayerNotFoundError(`Player ${address} not found`);\n}\nplayer.clicks += 1;",
+              "schema": "input ClickInput {\n  _placeholder: String\n}",
+              "scope": "global",
+              "template": "Increment a player's click count"
+            },
+            {
+              "description": "Remove a player from the game",
+              "errors": [],
+              "examples": [],
+              "id": "remove-player-op",
+              "name": "REMOVE_PLAYER",
+              "reducer": "const address = action.context?.signer?.user?.address;\nif (!address) {\n  throw new NotAuthorizedError('User is not authenticated');\n}\nconst index = state.players.findIndex(p => p.id === address);\nif (index === -1) {\n  throw new PlayerNotFoundError(`Player ${address} not found`);\n}\nstate.players.splice(index, 1);",
+              "schema": "input RemovePlayerInput {\n  _placeholder: String\n}",
+              "scope": "global",
+              "template": "Remove a player from the game"
+            },
+            {
+              "description": "Reset all player clicks to 0",
+              "errors": [],
+              "examples": [],
+              "id": "reset-game-op",
+              "name": "RESET_GAME",
+              "reducer": "const address = action.context?.signer?.user?.address;\nif (!address) {\n  throw new NotAuthorizedError('User is not authenticated');\n}\nif (state.gameMaster !== address) {\n  throw new NotGameMasterError('Only the game master can reset the game');\n}\nstate.players.forEach(p => { p.clicks = 0; });",
+              "schema": "input ResetGameInput {\n  _placeholder: String\n}",
+              "scope": "global",
+              "template": "Reset all player clicks to 0"
+            },
+            {
+              "description": "Start the game and become the game master",
+              "errors": [
+                {
+                  "code": "GAME_ALREADY_STARTED",
+                  "description": "Game has already been started",
+                  "id": "game-already-started-error",
+                  "name": "GameAlreadyStartedError",
+                  "template": ""
+                }
+              ],
+              "examples": [],
+              "id": "start-game-op",
+              "name": "START_GAME",
+              "reducer": "const address = action.context?.signer?.user?.address;\nif (!address) {\n  throw new NotAuthorizedError('User is not authenticated');\n}\nif (state.gameMaster) {\n  throw new GameAlreadyStartedError('Game has already been started');\n}\nstate.gameMaster = address;",
+              "schema": "input StartGameInput {\n  _placeholder: String\n}",
+              "scope": "global",
+              "template": "Start the game and become the game master"
+            },
+            {
+              "description": "Stop the game (game master only)",
+              "errors": [
+                {
+                  "code": "NOT_GAME_MASTER",
+                  "description": "Only the game master can perform this action",
+                  "id": "not-game-master-stop-error",
+                  "name": "NotGameMasterError",
+                  "template": ""
+                }
+              ],
+              "examples": [],
+              "id": "stop-game-op",
+              "name": "STOP_GAME",
+              "reducer": "const address = action.context?.signer?.user?.address;\nif (!address) {\n  throw new NotAuthorizedError('User is not authenticated');\n}\nif (state.gameMaster !== address) {\n  throw new NotGameMasterError('Only the game master can stop the game');\n}\nstate.gameMaster = null;\nstate.players = [];",
+              "schema": "input StopGameInput {\n  _placeholder: String\n}",
+              "scope": "global",
+              "template": "Stop the game (game master only)"
+            }
+          ]
+        }
+      ],
+      "state": {
+        "global": {
+          "examples": [],
+          "initialValue": "{ \"gameMaster\": null, \"players\": [] }",
+          "schema": "type ClickerGameState {\n  gameMaster: String\n  players: [Player!]!\n}\n\ntype Player {\n  id: OID!\n  name: String!\n  clicks: Int!\n}"
+        },
+        "local": {
+          "examples": [],
+          "initialValue": "",
+          "schema": ""
+        }
+      },
+      "version": 1
+    }
+  ]
+}

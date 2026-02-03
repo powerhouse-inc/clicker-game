@@ -8,26 +8,19 @@
     },
     "documentModels": [
         {
-            "id": "powerhouse/doc1",
-            "name": "Doc1"
+            "id": "powerhouse/clicker-game",
+            "name": "ClickerGame"
         }
     ],
     "editors": [
         {
-            "id": "doc1-editor",
-            "name": "Doc1Editor",
+            "id": "clicker-game-editor",
+            "name": "ClickerGameEditor",
             "documentTypes": [
-                "powerhouse/doc1"
+                "powerhouse/clicker-game"
             ]
         }
     ],
     "apps": [],
-    "subgraphs": [
-        {
-            "id": "test1",
-            "name": "Test1",
-            "documentTypes": []
-        }
-    ],
     "importScripts": []
 }

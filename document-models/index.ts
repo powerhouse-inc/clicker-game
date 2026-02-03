@@ -1,1 +1,1 @@
-export { Doc1 } from "./doc1/module.js";
+export { ClickerGame } from "./clicker-game/module.js";

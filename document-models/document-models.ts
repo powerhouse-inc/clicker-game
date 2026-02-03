@@ -1,6 +1,4 @@
 import type { DocumentModelModule } from "document-model";
-import { Doc1 } from "./doc1/module.js";
+import { ClickerGame } from "./clicker-game/module.js";
 
-export const documentModels: DocumentModelModule<any>[] = [
-  Doc1,
-];
+export const documentModels: DocumentModelModule<any>[] = [ClickerGame];

@@ -1,4 +1,3 @@
-
 import { getConnectBaseViteConfig } from "@powerhousedao/builder-tools";
 import { defineConfig, mergeConfig, type UserConfig } from "vite";
 
