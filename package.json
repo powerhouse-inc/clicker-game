@@ -1,6 +1,6 @@
 {
-  "name": "clicker-game",
-  "version": "1.0.0",
+  "name": "@powerhousedao/clicker-game",
+  "version": "0.0.1-dev",
   "license": "AGPL-3.0-only",
   "type": "module",
   "files": [
@@ -111,5 +111,5 @@
     "react-dom": ">=19.0.0"
   },
   "readme": "ERROR: No README data found!",
-  "_id": "clicker-game@1.0.0"
+  "_id": "@powerhousedao/clicker-game@1.0.0"
 }

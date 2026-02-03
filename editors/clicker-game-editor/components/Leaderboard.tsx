@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import type { Player } from "clicker-game/document-models/clicker-game";
+import type { Player } from "@powerhousedao/clicker-game/document-models/clicker-game";
 
 interface LeaderboardProps {
   players: Player[];

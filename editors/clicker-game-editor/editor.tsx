@@ -1,4 +1,4 @@
-import { useSelectedClickerGameDocument } from "clicker-game/document-models/clicker-game";
+import { useSelectedClickerGameDocument } from "@powerhousedao/clicker-game/document-models/clicker-game";
 import {
   addPlayer,
   click,

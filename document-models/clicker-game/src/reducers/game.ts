@@ -6,7 +6,7 @@ import {
   NotGameMasterError,
   PlayerNotFoundError,
 } from "../../gen/game/error.js";
-import type { ClickerGameGameOperations } from "clicker-game/document-models/clicker-game";
+import type { ClickerGameGameOperations } from "@powerhousedao/clicker-game/document-models/clicker-game";
 
 export const clickerGameGameOperations: ClickerGameGameOperations = {
   startGameOperation(state, action) {

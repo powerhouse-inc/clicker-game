@@ -16,7 +16,7 @@ import {
   stopGame,
   StartGameInputSchema,
   StopGameInputSchema,
-} from "clicker-game/document-models/clicker-game";
+} from "@powerhousedao/clicker-game/document-models/clicker-game";
 
 describe("GameOperations", () => {
   it("should handle addPlayer operation", () => {
