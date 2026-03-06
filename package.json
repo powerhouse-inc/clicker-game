@@ -111,6 +111,10 @@
     "react": ">=19.0.0",
     "react-dom": ">=19.0.0"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/powerhouse-inc/clicker-game"
+  },
   "readme": "ERROR: No README data found!",
   "_id": "@powerhousedao/clicker-game@0.0.1-dev"
 }
