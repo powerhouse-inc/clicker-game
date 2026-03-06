@@ -8,7 +8,7 @@ import {
 import type {
   ClickerGameAction,
   ClickerGameDocument,
-} from "@powerhousedao/clicker-game/document-models/clicker-game";
+} from "@powerhousedao/clicker-game/document-models/clicker-game/v1";
 import {
   assertIsClickerGameDocument,
   isClickerGameDocument,

@@ -1,4 +1,4 @@
-import { generateMock } from "@powerhousedao/codegen";
+import { generateMock } from "@powerhousedao/common/utils";
 import { describe, expect, it } from "vitest";
 import {
   reducer,
@@ -8,15 +8,15 @@ import {
   click,
   removePlayer,
   resetGame,
+  startGame,
+  stopGame,
   AddPlayerInputSchema,
   ClickInputSchema,
   RemovePlayerInputSchema,
   ResetGameInputSchema,
-  startGame,
-  stopGame,
   StartGameInputSchema,
   StopGameInputSchema,
-} from "@powerhousedao/clicker-game/document-models/clicker-game";
+} from "@powerhousedao/clicker-game/document-models/clicker-game/v1";
 
 describe("GameOperations", () => {
   it("should handle addPlayer operation", () => {

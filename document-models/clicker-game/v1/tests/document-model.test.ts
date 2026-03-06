@@ -17,7 +17,7 @@ import {
   assertIsClickerGameDocument,
   isClickerGameState,
   assertIsClickerGameState,
-} from "@powerhousedao/clicker-game/document-models/clicker-game";
+} from "@powerhousedao/clicker-game/document-models/clicker-game/v1";
 import { ZodError } from "zod";
 
 describe("ClickerGame Document Model", () => {

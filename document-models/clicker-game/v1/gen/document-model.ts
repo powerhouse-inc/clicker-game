@@ -111,8 +111,8 @@ export const documentModel: DocumentModelGlobalState = {
               id: "start-game-op",
               name: "START_GAME",
               reducer:
-                "const address = action.context?.signer?.user?.address;\nif (!address) {\n  throw new NotAuthorizedError('User is not authenticated');\n}\nif (state.gameMaster) {\n  throw new GameAlreadyStartedError('Game has already been started');\n}\nstate.gameMaster = address;",
-              schema: "input StartGameInput {\n  _placeholder: String\n}",
+                "const address = action.context?.signer?.user?.address;\nif (!address) {\n  throw new NotAuthorizedError('User is not authenticated');\n}\nif (state.gameMaster) {\n  throw new GameAlreadyStartedError('Game has already been started');\n}\nstate.gameMaster = address;\nstate.clickCooldown = action.input.cooldown || null;",
+              schema: "input StartGameInput {\n  cooldown: Int\n}",
               scope: "global",
               template: "Start the game and become the game master",
             },
@@ -131,7 +131,7 @@ export const documentModel: DocumentModelGlobalState = {
               id: "stop-game-op",
               name: "STOP_GAME",
               reducer:
-                "const address = action.context?.signer?.user?.address;\nif (!address) {\n  throw new NotAuthorizedError('User is not authenticated');\n}\nif (state.gameMaster !== address) {\n  throw new NotGameMasterError('Only the game master can stop the game');\n}\nstate.gameMaster = null;\nstate.players = [];",
+                "const address = action.context?.signer?.user?.address;\nif (!address) {\n  throw new NotAuthorizedError('User is not authenticated');\n}\nif (state.gameMaster !== address) {\n  throw new NotGameMasterError('Only the game master can stop the game');\n}\nstate.gameMaster = null;\nstate.clickCooldown = null;\nstate.players = [];",
               schema: "input StopGameInput {\n  _placeholder: String\n}",
               scope: "global",
               template: "Stop the game (game master only)",
@@ -142,9 +142,10 @@ export const documentModel: DocumentModelGlobalState = {
       state: {
         global: {
           examples: [],
-          initialValue: '{ "gameMaster": null, "players": [] }',
+          initialValue:
+            '{ "gameMaster": null, "clickCooldown": null, "players": [] }',
           schema:
-            "type ClickerGameState {\n  gameMaster: String\n  players: [Player!]!\n}\n\ntype Player {\n  id: OID!\n  name: String!\n  clicks: Int!\n}",
+            "type ClickerGameState {\n  gameMaster: String\n  clickCooldown: Int\n  players: [Player!]!\n}\n\ntype Player {\n  id: OID!\n  name: String!\n  clicks: Int!\n}",
         },
         local: {
           examples: [],

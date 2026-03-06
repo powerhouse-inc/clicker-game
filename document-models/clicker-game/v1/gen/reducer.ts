@@ -3,7 +3,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 import type { StateReducer } from "document-model";
 import { isDocumentAction, createReducer } from "document-model/core";
-import type { ClickerGamePHState } from "@powerhousedao/clicker-game/document-models/clicker-game";
+import type { ClickerGamePHState } from "@powerhousedao/clicker-game/document-models/clicker-game/v1";
 
 import { clickerGameGameOperations } from "../src/reducers/game.js";
 

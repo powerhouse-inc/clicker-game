@@ -42,6 +42,7 @@ export function ClickerGameStateSchema(): z.ZodObject<
 > {
   return z.object({
     __typename: z.literal("ClickerGameState").optional(),
+    clickCooldown: z.number().nullish(),
     gameMaster: z.string().nullish(),
     players: z.array(z.lazy(() => PlayerSchema())),
   });
@@ -76,7 +77,7 @@ export function StartGameInputSchema(): z.ZodObject<
   Properties<StartGameInput>
 > {
   return z.object({
-    _placeholder: z.string().nullish(),
+    cooldown: z.number().nullish(),
   });
 }
 

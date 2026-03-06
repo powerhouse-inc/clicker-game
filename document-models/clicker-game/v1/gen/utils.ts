@@ -19,6 +19,7 @@ import {
 
 export const initialGlobalState: ClickerGameGlobalState = {
   gameMaster: null,
+  clickCooldown: null,
   players: [],
 };
 export const initialLocalState: ClickerGameLocalState = {};

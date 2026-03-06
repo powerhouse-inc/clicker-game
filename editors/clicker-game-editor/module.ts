@@ -6,7 +6,7 @@ export const ClickerGameEditor: EditorModule = {
   Component: lazy(() => import("./editor.js")),
   documentTypes: ["powerhouse/clicker-game"],
   config: {
-    id: "@powerhousedao/clicker-game-editor",
+    id: "clicker-game-editor",
     name: "ClickerGameEditor",
   },
 };

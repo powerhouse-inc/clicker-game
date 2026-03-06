@@ -68,6 +68,7 @@ export type ClickInput = {
 };
 
 export type ClickerGameState = {
+  clickCooldown: Maybe<Scalars["Int"]["output"]>;
   gameMaster: Maybe<Scalars["String"]["output"]>;
   players: Array<Player>;
 };
@@ -87,7 +88,7 @@ export type ResetGameInput = {
 };
 
 export type StartGameInput = {
-  _placeholder?: InputMaybe<Scalars["String"]["input"]>;
+  cooldown?: InputMaybe<Scalars["Int"]["input"]>;
 };
 
 export type StopGameInput = {

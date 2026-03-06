@@ -1,35 +1,14 @@
 import {
   DuplicatePlayerError,
-  GameAlreadyStartedError,
-  GameNotStartedError,
   NotAuthorizedError,
-  NotGameMasterError,
+  GameNotStartedError,
   PlayerNotFoundError,
+  GameAlreadyStartedError,
+  NotGameMasterError,
 } from "../../gen/game/error.js";
-import type { ClickerGameGameOperations } from "@powerhousedao/clicker-game/document-models/clicker-game";
+import type { ClickerGameGameOperations } from "@powerhousedao/clicker-game/document-models/clicker-game/v1";
 
 export const clickerGameGameOperations: ClickerGameGameOperations = {
-  startGameOperation(state, action) {
-    const address = action.context?.signer?.user?.address;
-    if (!address) {
-      throw new NotAuthorizedError("User is not authenticated");
-    }
-    if (state.gameMaster) {
-      throw new GameAlreadyStartedError("Game has already been started");
-    }
-    state.gameMaster = address;
-  },
-  stopGameOperation(state, action) {
-    const address = action.context?.signer?.user?.address;
-    if (!address) {
-      throw new NotAuthorizedError("User is not authenticated");
-    }
-    if (state.gameMaster !== address) {
-      throw new NotGameMasterError("Only the game master can stop the game");
-    }
-    state.gameMaster = null;
-    state.players = [];
-  },
   addPlayerOperation(state, action) {
     const address = action.context?.signer?.user?.address;
     if (!address) {
@@ -83,5 +62,28 @@ export const clickerGameGameOperations: ClickerGameGameOperations = {
     state.players.forEach((p) => {
       p.clicks = 0;
     });
+  },
+  startGameOperation(state, action) {
+    const address = action.context?.signer?.user?.address;
+    if (!address) {
+      throw new NotAuthorizedError("User is not authenticated");
+    }
+    if (state.gameMaster) {
+      throw new GameAlreadyStartedError("Game has already been started");
+    }
+    state.gameMaster = address;
+    state.clickCooldown = action.input.cooldown || null;
+  },
+  stopGameOperation(state, action) {
+    const address = action.context?.signer?.user?.address;
+    if (!address) {
+      throw new NotAuthorizedError("User is not authenticated");
+    }
+    if (state.gameMaster !== address) {
+      throw new NotGameMasterError("Only the game master can stop the game");
+    }
+    state.gameMaster = null;
+    state.clickCooldown = null;
+    state.players = [];
   },
 };

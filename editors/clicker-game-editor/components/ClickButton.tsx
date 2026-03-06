@@ -1,9 +1,10 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 
 interface ClickButtonProps {
   onClick: () => void;
   disabled?: boolean;
   playerClicks?: number;
+  cooldownMs?: number | null;
 }
 
 interface FloatingScore {
@@ -16,17 +17,52 @@ export function ClickButton({
   onClick,
   disabled,
   playerClicks,
+  cooldownMs,
 }: ClickButtonProps) {
   const [floatingScores, setFloatingScores] = useState<FloatingScore[]>([]);
   const [isPressed, setIsPressed] = useState(false);
   const [coverOpen, setCoverOpen] = useState(false);
   const [isFlashing, setIsFlashing] = useState(false);
   const [noDelay, setNoDelay] = useState(false);
+  const [isCoolingDown, setIsCoolingDown] = useState(false);
+  const [cooldownProgress, setCooldownProgress] = useState(0);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const idCounter = useRef(0);
+  const cooldownAnimRef = useRef<number>(0);
+
+  const startCooldown = useCallback(() => {
+    if (!cooldownMs || cooldownMs <= 0) return;
+
+    setIsCoolingDown(true);
+    setCooldownProgress(0);
+
+    const startTime = performance.now();
+    const animate = (now: number) => {
+      const elapsed = now - startTime;
+      const progress = Math.min(elapsed / cooldownMs, 1);
+      setCooldownProgress(progress);
+
+      if (progress < 1) {
+        cooldownAnimRef.current = requestAnimationFrame(animate);
+      } else {
+        setIsCoolingDown(false);
+        setCooldownProgress(0);
+      }
+    };
+
+    cooldownAnimRef.current = requestAnimationFrame(animate);
+  }, [cooldownMs]);
+
+  useEffect(() => {
+    return () => {
+      if (cooldownAnimRef.current) {
+        cancelAnimationFrame(cooldownAnimRef.current);
+      }
+    };
+  }, []);
 
   const handleClick = (e: React.MouseEvent) => {
-    if (!coverOpen) return;
+    if (!coverOpen || isCoolingDown) return;
 
     onClick();
     setIsPressed(true);
@@ -35,9 +71,10 @@ export function ClickButton({
     setTimeout(() => setIsPressed(false), 150);
     setTimeout(() => {
       setIsFlashing(false);
-      // Keep noDelay true briefly so return to green is instant
       setTimeout(() => setNoDelay(false), 50);
     }, 150);
+
+    startCooldown();
 
     const rect = buttonRef.current?.getBoundingClientRect();
     if (rect) {
@@ -60,8 +97,31 @@ export function ClickButton({
     }
   };
 
-  const getIndicatorClass = () => {
+  const lerp = (a: number, b: number, t: number) => Math.round(a + (b - a) * t);
+
+  const getCooldownButtonStyle = (): React.CSSProperties | undefined => {
+    if (!isCoolingDown) return undefined;
+    const t = cooldownProgress;
+    // Interpolate from grey to original red
+    const h1 = lerp(0x55, 0xff, t);
+    const h2 = lerp(0x44, 0xdd, t);
+    const h3 = lerp(0x33, 0xaa, t);
+    const h4 = lerp(0x22, 0x77, t);
+    const glowAlpha = (0.2 + 0.3 * t).toFixed(2);
+    const glowSize = lerp(15, 30, t);
+    return {
+      background: `radial-gradient(circle at 30% 30%, rgb(${h1},${lerp(0x55, 0x55, t)},${lerp(0x55, 0x55, t)}) 0%, rgb(${h2},${lerp(0x44, 0x00, t)},${lerp(0x44, 0x00, t)}) 40%, rgb(${h3},${lerp(0x33, 0x00, t)},${lerp(0x33, 0x00, t)}) 70%, rgb(${h4},${lerp(0x22, 0x00, t)},${lerp(0x22, 0x00, t)}) 100%)`,
+      boxShadow: `inset 0 -8px 20px rgba(0,0,0,0.6), inset 0 8px 15px rgba(${lerp(100, 255, t)},${lerp(100, 100, t)},${lerp(100, 100, t)},${(0.2 + 0.2 * t).toFixed(2)}), 0 8px 20px rgba(0,0,0,0.5), 0 0 ${glowSize}px rgba(255,0,0,${glowAlpha})`,
+      animation: "none",
+    };
+  };
+
+  const getIndicatorClass = (index: number) => {
     if (isFlashing) return "flash";
+    if (isCoolingDown) {
+      const threshold = (index + 1) / 3;
+      return cooldownProgress >= threshold ? "cooldown-ready" : "cooldown-red";
+    }
     if (coverOpen) return "armed";
     return "standby";
   };
@@ -161,6 +221,20 @@ export function ClickButton({
           animation: pulse-green 1s ease-in-out infinite;
         }
 
+        .indicator.cooldown-red {
+          background: #ff0000;
+          box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3), 0 0 8px #ff0000, 0 0 15px #ff0000;
+          animation: pulse-cooldown-red 0.6s ease-in-out infinite;
+          transition: none !important;
+        }
+
+        .indicator.cooldown-ready {
+          background: #00ff00;
+          box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3), 0 0 8px #00ff00, 0 0 15px #00ff00;
+          animation: pulse-green 1s ease-in-out infinite;
+          transition: none !important;
+        }
+
         .indicator.flash {
           background: #ff0000 !important;
           box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3), 0 0 15px #ff0000, 0 0 30px #ff0000 !important;
@@ -180,6 +254,11 @@ export function ClickButton({
         @keyframes pulse-orange {
           0%, 100% { box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3), 0 0 6px #ff6600, 0 0 10px #ff6600; }
           50% { box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3), 0 0 10px #ff6600, 0 0 18px #ff6600; }
+        }
+
+        @keyframes pulse-cooldown-red {
+          0%, 100% { box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3), 0 0 6px #ff0000, 0 0 10px #ff0000; }
+          50% { box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3), 0 0 12px #ff0000, 0 0 20px #ff0000; }
         }
 
         .button-housing {
@@ -237,6 +316,25 @@ export function ClickButton({
           color: white;
           text-shadow: 0 0 10px rgba(255, 255, 255, 0.9), 1px 1px 0 #660000;
           animation: button-pulse 2s ease-in-out infinite;
+        }
+
+        .nuke-button.on-cooldown {
+          cursor: not-allowed;
+          animation: none;
+        }
+
+        .cooldown-text {
+          display: block;
+          line-height: 1.4;
+          font-size: 6px;
+          color: #ff4444;
+          text-shadow: 0 0 8px rgba(255, 0, 0, 0.8);
+          animation: blink-text 0.8s ease-in-out infinite;
+        }
+
+        @keyframes blink-text {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.3; }
         }
 
         @keyframes button-pulse {
@@ -334,17 +432,6 @@ export function ClickButton({
           left: 20%;
           width: 60%;
           height: 20px;
-          background: linear-gradient(180deg, rgba(255, 255, 255, 0.2) 0%, transparent 100%);
-          border-radius: 50%;
-        }
-
-        .cover-glass::before {
-          content: '';
-          position: absolute;
-          top: 8px;
-          left: 20%;
-          width: 60%;
-          height: 20px;
           background: linear-gradient(180deg, rgba(255, 255, 255, 0.3) 0%, transparent 100%);
           border-radius: 50%;
         }
@@ -370,12 +457,17 @@ export function ClickButton({
             <button
               ref={buttonRef}
               onClick={handleClick}
-              disabled={disabled || !coverOpen}
-              className={`nuke-button ${isPressed ? "pressed" : ""}`}
+              disabled={disabled || !coverOpen || isCoolingDown}
+              className={`nuke-button ${isPressed ? "pressed" : ""}${isCoolingDown ? " on-cooldown" : ""}`}
+              style={getCooldownButtonStyle()}
             >
-              <span className={`launch-text ${coverOpen ? "visible" : ""}`}>
-                LAUNCH
-              </span>
+              {isCoolingDown ? (
+                <span className="cooldown-text">RELOADING</span>
+              ) : (
+                <span className={`launch-text ${coverOpen ? "visible" : ""}`}>
+                  LAUNCH
+                </span>
+              )}
             </button>
 
             {floatingScores.map((score) => (
@@ -401,13 +493,13 @@ export function ClickButton({
 
           <div className="indicator-panel">
             <div
-              className={`indicator ind-0 ${getIndicatorClass()}${noDelay ? " no-delay" : ""}`}
+              className={`indicator ind-0 ${getIndicatorClass(0)}${noDelay ? " no-delay" : ""}`}
             />
             <div
-              className={`indicator ind-1 ${getIndicatorClass()}${noDelay ? " no-delay" : ""}`}
+              className={`indicator ind-1 ${getIndicatorClass(1)}${noDelay ? " no-delay" : ""}`}
             />
             <div
-              className={`indicator ind-2 ${getIndicatorClass()}${noDelay ? " no-delay" : ""}`}
+              className={`indicator ind-2 ${getIndicatorClass(2)}${noDelay ? " no-delay" : ""}`}
             />
           </div>
         </div>

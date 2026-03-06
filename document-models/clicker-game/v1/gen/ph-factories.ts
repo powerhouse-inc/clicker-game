@@ -12,7 +12,7 @@ import type {
 import { createDocument } from "./utils.js";
 
 export function defaultGlobalState(): ClickerGameGlobalState {
-  return { gameMaster: null, players: [] };
+  return { gameMaster: null, clickCooldown: null, players: [] };
 }
 
 export function defaultLocalState(): ClickerGameLocalState {

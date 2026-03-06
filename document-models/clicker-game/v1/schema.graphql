@@ -21,6 +21,7 @@ scalar Upload
 
 type ClickerGameState {
   gameMaster: String
+  clickCooldown: Int
   players: [Player!]!
 }
 
@@ -49,7 +50,7 @@ input ResetGameInput {
 }
 
 input StartGameInput {
-  _placeholder: String
+  cooldown: Int
 }
 
 input StopGameInput {

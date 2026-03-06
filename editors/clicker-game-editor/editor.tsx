@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useSelectedClickerGameDocument } from "@powerhousedao/clicker-game/document-models/clicker-game";
 import {
   addPlayer,
@@ -6,7 +7,7 @@ import {
   resetGame,
   startGame,
   stopGame,
-} from "../../document-models/clicker-game/gen/creators.js";
+} from "../../document-models/clicker-game/v1/gen/creators.js";
 import {
   ClickButton,
   Leaderboard,
@@ -14,6 +15,15 @@ import {
   RetroStyles,
 } from "./components/index.js";
 import { useRenown } from "@powerhousedao/reactor-browser/connect";
+
+const COOLDOWN_OPTIONS = [
+  { label: "NONE", value: 0 },
+  { label: "0.5S", value: 500 },
+  { label: "1S", value: 1000 },
+  { label: "2S", value: 2000 },
+  { label: "3S", value: 3000 },
+  { label: "5S", value: 5000 },
+];
 
 export default function Editor() {
   const [document, dispatch] = useSelectedClickerGameDocument();
@@ -41,10 +51,13 @@ export default function Editor() {
     : undefined;
   const totalClicks = players.reduce((sum, p) => sum + p.clicks, 0);
 
+  const clickCooldown = document.state.global.clickCooldown;
   const documentName = document.header.name || "CLICKER GAME";
 
+  const [selectedCooldown, setSelectedCooldown] = useState(0);
+
   const handleStartGame = () => {
-    dispatch(startGame({}));
+    dispatch(startGame({ cooldown: selectedCooldown || undefined }));
   };
 
   const handleStopGame = () => {
@@ -101,16 +114,92 @@ export default function Editor() {
             START A GAME TO BECOME THE GAME MASTER!
           </p>
           {status === "authorized" && (
-            <button
-              onClick={handleStartGame}
-              className="action-btn action-btn-green"
+            <div
               style={{
-                padding: "12px 24px",
-                fontSize: "10px",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                gap: "18px",
               }}
             >
-              ▶ START GAME
-            </button>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  gap: "6px",
+                }}
+              >
+                <label
+                  style={{
+                    fontFamily: "'Press Start 2P', monospace",
+                    fontSize: "6px",
+                    color: "rgba(255, 255, 255, 0.8)",
+                  }}
+                >
+                  SELECT CLICK COOLDOWN
+                </label>
+                <div
+                  style={{
+                    display: "flex",
+                    gap: "4px",
+                    flexWrap: "wrap",
+                    justifyContent: "center",
+                  }}
+                >
+                  {COOLDOWN_OPTIONS.map((opt) => {
+                    const isSelected = selectedCooldown === opt.value;
+                    return (
+                      <button
+                        key={opt.value}
+                        onClick={() => setSelectedCooldown(opt.value)}
+                        className="action-btn action-btn-green"
+                        style={{
+                          padding: "6px 10px",
+                          fontSize: "7px",
+                          opacity: isSelected ? 1 : 0.35,
+                          background: isSelected
+                            ? "rgba(57, 255, 20, 0.2)"
+                            : "transparent",
+                          boxShadow: isSelected
+                            ? "0 0 10px rgba(57, 255, 20, 0.5)"
+                            : "none",
+                        }}
+                      >
+                        {opt.label}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+              <button
+                onClick={handleStartGame}
+                className="action-btn action-btn-green"
+                style={{
+                  padding: "12px 24px",
+                  fontSize: "10px",
+                }}
+              >
+                <span
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "8px",
+                  }}
+                >
+                  <span
+                    style={{
+                      width: 0,
+                      height: 0,
+                      borderTop: "5px solid transparent",
+                      borderBottom: "5px solid transparent",
+                      borderLeft: "8px solid currentColor",
+                    }}
+                  />
+                  START GAME
+                </span>
+              </button>
+            </div>
           )}
           {status === "unauthorized" && (
             <p
@@ -195,7 +284,11 @@ export default function Editor() {
     }
 
     return (
-      <ClickButton onClick={handleClick} playerClicks={currentPlayer.clicks} />
+      <ClickButton
+        onClick={handleClick}
+        playerClicks={currentPlayer.clicks}
+        cooldownMs={clickCooldown}
+      />
     );
   };
 
@@ -328,7 +421,7 @@ export default function Editor() {
               color: "rgba(0, 255, 255, 0.4)",
             }}
           >
-            © POWERHOUSE ARCADE 2025
+            © POWERHOUSE ARCADE {new Date().getFullYear()}
           </p>
         </div>
       </div>

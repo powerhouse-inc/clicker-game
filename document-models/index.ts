@@ -1,1 +1,1 @@
-export { ClickerGame } from "./clicker-game/module.js";
+export { ClickerGame as ClickerGameV1 } from "./clicker-game/v1/module.js";

@@ -61,12 +61,12 @@
     "migrate": "ph-cli migrate"
   },
   "dependencies": {
-    "@powerhousedao/builder-tools": "6.0.0-dev.29",
-    "@powerhousedao/common": "6.0.0-dev.29",
-    "@powerhousedao/design-system": "6.0.0-dev.29",
+    "@powerhousedao/builder-tools": "6.0.1-staging.1",
+    "@powerhousedao/common": "6.0.1-staging.1",
+    "@powerhousedao/design-system": "6.0.1-staging.1",
     "@powerhousedao/document-engineering": "1.40.1",
-    "@powerhousedao/vetra": "6.0.0-dev.29",
-    "document-model": "6.0.0-dev.30",
+    "@powerhousedao/vetra": "6.0.1-staging.1",
+    "document-model": "6.0.1-staging.1",
     "graphql": "^16.10.0",
     "graphql-tag": "^2.12.6",
     "zod": "^4.3.5"
@@ -74,21 +74,22 @@
   "devDependencies": {
     "@electric-sql/pglite": "^0.2.12",
     "@eslint/js": "^9.38.0",
-    "@powerhousedao/analytics-engine-core": "^0.5.0",
-    "@powerhousedao/codegen": "6.0.0-dev.29",
-    "@powerhousedao/config": "6.0.0-dev.30",
-    "@powerhousedao/connect": "6.0.0-dev.29",
-    "@powerhousedao/ph-cli": "6.0.0-dev.29",
-    "@powerhousedao/reactor-api": "6.0.0-dev.29",
-    "@powerhousedao/reactor-browser": "6.0.0-dev.29",
-    "@powerhousedao/reactor-local": "6.0.0-dev.29",
-    "@powerhousedao/switchboard": "6.0.0-dev.29",
+    "@powerhousedao/analytics-engine-core": "6.0.1-staging.1",
+    "@powerhousedao/codegen": "6.0.1-staging.1",
+    "@powerhousedao/config": "6.0.1-staging.1",
+    "@powerhousedao/connect": "6.0.1-staging.1",
+    "@powerhousedao/ph-cli": "6.0.1-staging.1",
+    "@powerhousedao/reactor-api": "6.0.1-staging.1",
+    "@powerhousedao/reactor-browser": "6.0.1-staging.1",
+    "@powerhousedao/reactor-local": "6.0.1-staging.1",
+    "@powerhousedao/switchboard": "6.0.1-staging.1",
     "@tailwindcss/cli": "^4.1.4",
     "@testing-library/react": "^16.3.0",
     "@types/node": "^24.9.2",
     "@types/react": "^19.2.3",
     "@vitejs/plugin-react": "^5.1.0",
-    "document-drive": "6.0.0-dev.29",
+    "cmd-ts": "^0.15.0",
+    "document-drive": "6.0.1-staging.1",
     "eslint": "^9.38.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.4",
@@ -111,5 +112,5 @@
     "react-dom": ">=19.0.0"
   },
   "readme": "ERROR: No README data found!",
-  "_id": "@powerhousedao/clicker-game@1.0.0"
+  "_id": "@powerhousedao/clicker-game@0.0.1-dev"
 }
