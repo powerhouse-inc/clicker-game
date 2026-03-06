@@ -217,6 +217,21 @@ jobs:
           git tag "v${{ steps.version.outputs.new_version }}"
           git push origin "v${{ steps.version.outputs.new_version }}"
 
+      - name: Notify downstream (powerhouse-demo)
+        if: needs.prepare.outputs.dry_run != 'true'
+        env:
+          GH_TOKEN: ${{ secrets.DOWNSTREAM_DISPATCH_PAT }}
+          CHANNEL: ${{ needs.prepare.outputs.channel }}
+          NEW_VERSION: ${{ steps.version.outputs.new_version }}
+        run: |
+          PACKAGE_NAME=$(node -p "require('./package.json').name")
+          echo "Dispatching dependency-release to powerhouse-demo (channel=$CHANNEL, package=$PACKAGE_NAME@$NEW_VERSION)"
+          gh api repos/powerhouse-inc/powerhouse-demo/dispatches \
+            -f event_type="dependency-release" \
+            -f "client_payload[channel]=$CHANNEL" \
+            -f "client_payload[package]=$PACKAGE_NAME" \
+            -f "client_payload[version]=$NEW_VERSION"
+
   # ==========================================================================
   # Build and push Docker images
   # ==========================================================================
