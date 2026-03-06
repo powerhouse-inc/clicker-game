@@ -192,18 +192,22 @@ jobs:
         run: git push
 
       - name: Setup npm for publishing
-        if: needs.prepare.outputs.dry_run != 'true' && secrets.NPM_ACCESS_TOKEN != ''
+        if: needs.prepare.outputs.dry_run != 'true'
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           registry-url: 'https://registry.npmjs.org'
 
       - name: Publish to npm with provenance
-        if: needs.prepare.outputs.dry_run != 'true' && secrets.NPM_ACCESS_TOKEN != ''
+        if: needs.prepare.outputs.dry_run != 'true'
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_ACCESS_TOKEN }}
           NPM_CONFIG_PROVENANCE: true
         run: |
+          if [ -z "$NODE_AUTH_TOKEN" ]; then
+            echo "NPM_ACCESS_TOKEN not set, skipping npm publish"
+            exit 0
+          fi
           CHANNEL="${{ needs.prepare.outputs.channel }}"
           if [ "$CHANNEL" = "latest" ] || [ "$CHANNEL" = "main" ]; then
             pnpm publish --access public --tag latest --no-git-checks
@@ -240,9 +244,7 @@ jobs:
     needs: [prepare, update-and-publish]
     if: |
       needs.prepare.outputs.skip_docker != 'true' &&
-      needs.prepare.outputs.dry_run != 'true' &&
-      secrets.DOCKER_USERNAME != '' &&
-      secrets.DOCKER_PASSWORD != ''
+      needs.prepare.outputs.dry_run != 'true'
     runs-on: ubuntu-latest
     permissions:
       contents: read
