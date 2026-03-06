@@ -1,6 +1,6 @@
 {
   "name": "@powerhousedao/clicker-game",
-  "version": "0.0.2-dev",
+  "version": "0.0.2-staging.0",
   "license": "AGPL-3.0-only",
   "type": "module",
   "files": [
@@ -113,8 +113,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/powerhouse-inc/clicker-game"
+    "url": "git+https://github.com/powerhouse-inc/clicker-game.git"
   },
   "readme": "ERROR: No README data found!",
-  "_id": "@powerhousedao/clicker-game@0.0.1-dev"
+  "bugs": {
+    "url": "https://github.com/powerhouse-inc/clicker-game/issues"
+  },
+  "homepage": "https://github.com/powerhouse-inc/clicker-game#readme"
 }
