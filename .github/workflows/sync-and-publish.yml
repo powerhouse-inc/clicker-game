@@ -148,7 +148,7 @@ jobs:
           esac
 
       - name: Update Powerhouse dependencies
-        run: ph update
+        run: npx ph-cmd update
 
       - name: Install dependencies
         run: pnpm install
